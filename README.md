@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Daily Space 🌌
 
-## Getting Started
+Вітаємо у Daily Space - вашому щоденному порталі у космос! Створено [@rettargatted_bot](https://t.me/rettargatted_bot).
 
-First, run the development server:
+## Про проект
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Daily Space - це веб-додаток, який дозволяє досліджувати космос через щоденні астрономічні фотографії від NASA. Кожного дня ви можете:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Переглядати нове унікальне зображення або відео космосу
+- Читати детальні описи від астрономів NASA
+- Подорожувати в часі, переглядаючи архів з 1995 року
+- Насолоджуватися HD якістю зображень
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Особливості
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 🎨 Сучасний дизайн
+- Адаптивний інтерфейс для всіх пристроїв
+- Плавні анімації та переходи
+- Зручна навігація по датах
+- Темна тема для комфортного перегляду
 
-## Learn More
+### 🚀 Технічні переваги
+- Миттєве завантаження зображень
+- Оптимізація для швидкої роботи
+- Підтримка HD якості
+- Автоматичне масштабування контенту
 
-To learn more about Next.js, take a look at the following resources:
+### 🌟 Додаткові можливості
+- Перегляд HD версій зображень
+- Детальні описи від експертів NASA
+- Підтримка відео контенту
+- Зручний календар для навігації
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Як це працює
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Отримання даних**
+   - Щоденне оновлення через NASA APOD API
+   - Автоматична оптимізація зображень
+   - Кешування для швидкого доступу
 
-## Deploy on Vercel
+2. **Відображення**
+   - Адаптивний дизайн для всіх екранів
+   - Оптимізоване завантаження
+   - Плавні переходи між датами
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. **Взаємодія**
+   - Інтуїтивна навігація
+   - Швидкий доступ до архіву
+   - Зручний перегляд деталей
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Створено з використанням
+
+- Vercel для хостингу та деплою
+- NASA APOD API для отримання даних
+- Tailwind CSS для стилізації
+
+## Контакти
+
+Для більш детальної інформації та інших проектів звертайтесь до [@rettargatted_bot](https://t.me/rettargatted_bot) в Telegram.
+
+## Ліцензія
+
+Проект розповсюджується під ліцензією MIT.

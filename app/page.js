@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import DailyImage from '../components/DailyImage'
+import DailyImage from '@/components/DailyImage'
+import StartScreen from '@/components/StartScreen'
 
 function debounce(func, delay) {
     let timeout;
@@ -12,83 +13,64 @@ function debounce(func, delay) {
 }
 
 export default function Home() {
-    const [mounted, setMounted] = useState(false)
     const [imageData, setImageData] = useState(null)
     const [selectedDate, setSelectedDate] = useState(null)
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
+    const [started, setStarted] = useState(false)
     const apiKey = process.env.NEXT_PUBLIC_NASA_API_KEY
 
-    useEffect(() => {
-        setMounted(true)
-    }, [])
-
-    const fetchImage = useCallback(async (date) => {
-        if (!apiKey) {
-            setImageData({
-                error: 'Помилка: API ключ NASA не налаштований. Будь ласка, створіть файл .env.local і додайте NEXT_PUBLIC_NASA_API_KEY=ваш_ключ'
-            })
-            return
-        }
-        
+    const fetchImageData = async (date) => {
         setIsLoading(true)
-
         try {
-            const url = `https://api.nasa.gov/planetary/apod?api_key=${apiKey}${date ? `&date=${date}` : ''}`
-            const response = await fetch(url)
-            const data = await response.json()
-
+            const response = await fetch(
+                `https://api.nasa.gov/planetary/apod?api_key=${process.env.NEXT_PUBLIC_NASA_API_KEY}&date=${date}`
+            )
             if (!response.ok) {
-                throw new Error(data.msg || 'Помилка завантаження зображення')
+                throw new Error('Failed to fetch data')
             }
-
-            localStorage.setItem('lastImageData', JSON.stringify(data))
-            localStorage.setItem('lastDate', date || '')
-
+            const data = await response.json()
             setImageData(data)
-            setSelectedDate(date)
         } catch (error) {
-            console.error('Помилка:', error)
-            setImageData({ error: error.message })
+            console.error('Error fetching NASA APOD:', error)
+            setImageData(null)
         } finally {
             setIsLoading(false)
         }
-    }, [apiKey, setImageData, setIsLoading, setSelectedDate])
-
-    const debouncedFetchImage = useCallback(
-        debounce((date) => {
-            fetchImage(date)
-        }, 300),
-        [fetchImage]
-    )
-
-    useEffect(() => {
-        if (mounted) {
-            const savedData = localStorage.getItem('lastImageData')
-            const savedDate = localStorage.getItem('lastDate')
-
-            if (savedData && savedDate) {
-                setImageData(JSON.parse(savedData))
-                setSelectedDate(savedDate)
-            } else {
-                fetchImage()
-            }
-        }
-    }, [fetchImage, mounted])
-
-    if (!mounted) {
-        return null
     }
 
-    return (
-        <main className='min-h-screen pb-8'>
-            <div className='max-w-7xl mx-auto'>
-                <DailyImage
-                    imageData={imageData}
-                    onDateChange={debouncedFetchImage}
-                    selectedDate={selectedDate}
-                    isLoading={isLoading}
-                />
-            </div>
-        </main>
-    )
+    useEffect(() => {
+        if (!started) return
+
+        const loadImage = async () => {
+            if (selectedDate) {
+                await fetchImageData(selectedDate)
+            } else {
+                const today = new Date().toISOString().split('T')[0]
+                setSelectedDate(today)
+                await fetchImageData(today)
+            }
+        }
+
+        loadImage()
+    }, [selectedDate, started])
+  const handleStart = () => {
+    setStarted(true)
+  }
+
+  if (!started) {
+    return <StartScreen onStart={handleStart} />
+  }
+
+  return (
+    <main className="min-h-screen bg-gradient-to-b from-[#1a1a2e] to-[#252538] text-white p-4 md:p-8">
+      <div className="max-w-6xl mx-auto">
+        <DailyImage
+          imageData={imageData}
+          onDateChange={handleDateChange}
+          selectedDate={selectedDate}
+          isLoading={isLoading}
+        />
+      </div>
+    </main>
+  )
 }

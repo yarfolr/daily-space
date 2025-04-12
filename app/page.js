@@ -17,7 +17,6 @@ export default function Home() {
     const [selectedDate, setSelectedDate] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
     const [started, setStarted] = useState(false)
-    const apiKey = process.env.NEXT_PUBLIC_NASA_API_KEY
 
     const fetchImageData = async (date) => {
         setIsLoading(true)
@@ -38,6 +37,10 @@ export default function Home() {
         }
     }
 
+    const handleDateChange = useCallback((date) => {
+        setSelectedDate(date)
+    }, [])
+
     useEffect(() => {
         if (!started) return
 
@@ -53,24 +56,25 @@ export default function Home() {
 
         loadImage()
     }, [selectedDate, started])
-  const handleStart = () => {
-    setStarted(true)
-  }
 
-  if (!started) {
-    return <StartScreen onStart={handleStart} />
-  }
+    const handleStart = () => {
+        setStarted(true)
+    }
 
-  return (
-    <main className="min-h-screen bg-gradient-to-b from-[#1a1a2e] to-[#252538] text-white p-4 md:p-8">
-      <div className="max-w-6xl mx-auto">
-        <DailyImage
-          imageData={imageData}
-          onDateChange={handleDateChange}
-          selectedDate={selectedDate}
-          isLoading={isLoading}
-        />
-      </div>
-    </main>
-  )
+    if (!started) {
+        return <StartScreen onStart={handleStart} />
+    }
+
+    return (
+        <main className="min-h-screen bg-gradient-to-b from-[#1a1a2e] to-[#252538] text-white p-4 md:p-8">
+            <div className="max-w-6xl mx-auto">
+                <DailyImage
+                    imageData={imageData}
+                    onDateChange={handleDateChange}
+                    selectedDate={selectedDate}
+                    isLoading={isLoading}
+                />
+            </div>
+        </main>
+    )
 }

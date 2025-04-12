@@ -6,42 +6,49 @@ import DatePicker from './DatePicker'
 
 export default function DailyImage({ imageData, onDateChange, selectedDate, isLoading }) {
     const [imageLoaded, setImageLoaded] = React.useState(false)
+    const [imageError, setImageError] = React.useState(false)
 
     const handleImageLoad = () => {
         setImageLoaded(true)
+        setImageError(false)
     }
 
-    if (isLoading) {
-        return (
-            <div className="relative bg-gradient-to-b from-[#252538]/95 to-[#1a1a2e]/95 rounded-2xl p-4 md:p-8 shadow-2xl min-h-[200px] transition-all duration-500">
-                <div className="flex flex-col items-center justify-center space-y-8 animate-pulse">
-                    <div className="h-8 w-64 bg-[#3aafa9]/20 rounded" />
-                    <div className="w-full aspect-[16/9] bg-[#3aafa9]/10 rounded-xl" />
-                    <div className="w-full max-w-2xl space-y-4">
-                        <div className="h-4 w-3/4 bg-[#3aafa9]/20 rounded mx-auto" />
-                        <div className="h-4 w-1/2 bg-[#3aafa9]/20 rounded mx-auto" />
-                    </div>
-                </div>
-            </div>
-        )
+    const handleImageError = () => {
+        setImageError(true)
+        setImageLoaded(false)
     }
 
-    if (!imageData) {
-        return (
-            <div className="relative bg-gradient-to-b from-[#252538]/95 to-[#1a1a2e]/95 rounded-2xl p-4 md:p-8 shadow-2xl min-h-[200px] transition-all duration-500">
-                <div className="flex items-center justify-center h-full">
-                    <p className="text-xl text-[#3aafa9] animate-pulse">Завантаження даних...</p>
+    const renderLoadingState = () => (
+        <div className="relative bg-gradient-to-b from-background-dark/95 to-background/95 rounded-2xl p-4 md:p-8 shadow-2xl min-h-[200px] transition-all duration-500">
+            <div className="flex flex-col items-center justify-center space-y-8 animate-pulse">
+                <div className="h-8 w-64 bg-primary/20 rounded" />
+                <div className="w-full aspect-[16/9] bg-primary/10 rounded-xl" />
+                <div className="w-full max-w-2xl space-y-4">
+                    <div className="h-4 w-3/4 bg-primary/20 rounded mx-auto" />
+                    <div className="h-4 w-1/2 bg-primary/20 rounded mx-auto" />
                 </div>
             </div>
-        )
-    }
+        </div>
+    )
+
+    const renderErrorState = () => (
+        <div className="relative bg-gradient-to-b from-background-dark/95 to-background/95 rounded-2xl p-4 md:p-8 shadow-2xl min-h-[200px] transition-all duration-500">
+            <div className="flex items-center justify-center h-full">
+                <p className="text-xl text-primary animate-pulse">Помилка завантаження зображення</p>
+            </div>
+        </div>
+    )
+
+    if (isLoading) return renderLoadingState()
+    if (!imageData) return renderLoadingState()
+    if (imageError) return renderErrorState()
 
     return (
-        <div className="relative bg-gradient-to-b from-[#252538]/95 to-[#1a1a2e]/95 rounded-2xl p-4 md:p-8 shadow-2xl min-h-[200px] transition-all duration-500">
-            <div className="absolute inset-0 -z-10 bg-[#3aafa9]/10 rounded-2xl blur-xl" />
+        <div className="relative bg-gradient-to-b from-background-dark/95 to-background/95 rounded-2xl p-4 md:p-8 shadow-2xl min-h-[200px] transition-all duration-500">
+            <div className="absolute inset-0 -z-10 bg-primary/10 rounded-2xl blur-xl" />
             
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 md:mb-8">
-                <h2 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-[#3aafa9] to-purple-500 text-transparent bg-clip-text">
+                <h2 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-purple-500 text-transparent bg-clip-text">
                     Астрономічне зображення дня
                 </h2>
                 <DatePicker onDateChange={onDateChange} selectedDate={selectedDate} />
@@ -52,7 +59,7 @@ export default function DailyImage({ imageData, onDateChange, selectedDate, isLo
                     {imageData.title}
                 </h3>
                 
-                <div className="relative w-full bg-[#1a1a2e] rounded-xl overflow-hidden shadow-lg">
+                <div className="relative w-full bg-background rounded-xl overflow-hidden shadow-lg">
                     {imageData.media_type === 'video' ? (
                         <div className="relative pt-[56.25%]">
                             <iframe
@@ -65,7 +72,12 @@ export default function DailyImage({ imageData, onDateChange, selectedDate, isLo
                             />
                         </div>
                     ) : (
-                        <div className="relative pt-[56.25%]">
+                        <div className="relative pt-[56.25%] bg-background-dark">
+                            {!imageLoaded && (
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+                                </div>
+                            )}
                             <div className={`absolute top-0 left-0 w-full h-full transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}>
                                 <Image
                                     src={imageData.url}
@@ -75,6 +87,7 @@ export default function DailyImage({ imageData, onDateChange, selectedDate, isLo
                                     quality={90}
                                     priority
                                     onLoad={handleImageLoad}
+                                    onError={handleImageError}
                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
                                 />
                             </div>
@@ -91,9 +104,14 @@ export default function DailyImage({ imageData, onDateChange, selectedDate, isLo
                         href={imageData.hdurl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-2 w-full text-[#3aafa9] hover:text-[#2c928b] transition-colors duration-200 mt-4"
+                        className="
+                            inline-flex items-center justify-center gap-2 w-full
+                            text-primary hover:text-primary-dark
+                            transition-all duration-200
+                            mt-4 group
+                        "
                     >
-                        <span>Переглянути HD версію</span>
+                        <span className="group-hover:underline">Переглянути HD версію</span>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="20"
@@ -104,6 +122,7 @@ export default function DailyImage({ imageData, onDateChange, selectedDate, isLo
                             strokeWidth="2"
                             strokeLinecap="round"
                             strokeLinejoin="round"
+                            className="transform group-hover:translate-x-1 transition-transform"
                         >
                             <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
                             <polyline points="15 3 21 3 21 9" />
